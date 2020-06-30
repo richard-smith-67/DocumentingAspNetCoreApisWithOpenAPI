@@ -8,7 +8,11 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Library.API
 {
@@ -50,7 +54,7 @@ namespace Library.API
             // it's better to store the connection string in an environment variable)
             var connectionString = Configuration["ConnectionStrings:LibraryDBConnectionString"];
             services.AddDbContext<LibraryContext>(o => o.UseSqlServer(connectionString));
-            
+
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = actionContext =>
@@ -76,7 +80,42 @@ namespace Library.API
             services.AddScoped<IAuthorRepository, AuthorRepository>();
 
             services.AddAutoMapper();
+
+            services.AddSwaggerGen(setupAction =>
+            {
+                setupAction.SwaggerDoc("LibraryOpenAPISpecification",
+                    new Microsoft.OpenApi.Models.OpenApiInfo()
+                    {
+                        Title = "Library API",
+                        Version = "1",
+                        Description = "Through this API you can access authors and their books",
+                        Contact = new OpenApiContact()
+                        {
+                            Email = "richard@gmail.com",
+                            Name = "Richard Smith",
+                            Url = new Uri("https://www.twitter.com/BeatPoet")
+                        },
+
+                        License = new OpenApiLicense()
+                        {
+                            Name = "MIT License",
+                            Url = new Uri("https://opensource.org/licences/MIT")
+                        }
+                    });
+
+                //We specify xml comments file in build properties for the project
+                var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+
+                setupAction.IncludeXmlComments(xmlCommentsFile);
+
+            });
+
+
+
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -93,6 +132,14 @@ namespace Library.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(setUpAction =>
+            {
+                setUpAction.SwaggerEndpoint("/swagger/LibraryOpenAPISpecification/swagger.json", "Library API");
+                setUpAction.RoutePrefix = "";
+            });
 
             app.UseStaticFiles();
 
