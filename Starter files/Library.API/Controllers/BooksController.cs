@@ -28,6 +28,9 @@ namespace Library.API.Controllers
         }
        
         [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks(
         Guid authorId )
         {

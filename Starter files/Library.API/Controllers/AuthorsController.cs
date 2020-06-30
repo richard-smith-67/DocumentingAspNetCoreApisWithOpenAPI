@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Library.API.Controllers
 {
 
+    
     [Route("api/authors")]
     [ApiController]
     public class AuthorsController : ControllerBase
@@ -46,6 +48,9 @@ namespace Library.API.Controllers
         }
 
         [HttpPut("{authorId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<Author>> UpdateAuthor(
             Guid authorId,
             AuthorForUpdate authorForUpdate)
