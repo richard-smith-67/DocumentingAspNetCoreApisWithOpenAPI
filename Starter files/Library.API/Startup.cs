@@ -16,7 +16,7 @@ using System.Linq;
 using System.Reflection;
 
 
-[assembly: ApiConventionType(typeof(DefaultApiConventions))]
+
 namespace Library.API
 {
   
@@ -35,12 +35,12 @@ namespace Library.API
             services.AddMvc(setupAction =>
             {
                 //This applies these attributes to all controllers
-                //setupAction.Filters.Add(
-                //    new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
-                //setupAction.Filters.Add(
-                //    new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
-                //setupAction.Filters.Add(
-                //   new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
+                setupAction.Filters.Add(
+                    new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
+                setupAction.Filters.Add(
+                    new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
+                setupAction.Filters.Add(
+                   new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
 
                 setupAction.ReturnHttpNotAcceptable = true;
 
