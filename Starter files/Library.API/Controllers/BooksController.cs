@@ -3,12 +3,14 @@ using Library.API.Models;
 using Library.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Library.API.Controllers
 {
+    [Produces("application/json", "application/xml")]
     [Route("api/authors/{authorId}/books")]
     [ApiController]
     public class BooksController : ControllerBase
@@ -74,6 +76,12 @@ namespace Library.API.Controllers
 
 
         [HttpPost()]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity,
+            Type = typeof(ModelStateDictionary))]
+
         public async Task<ActionResult<Book>> CreateBook(
             Guid authorId,
             [FromBody] BookForCreation bookForCreation)
