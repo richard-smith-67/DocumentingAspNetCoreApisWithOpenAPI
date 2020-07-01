@@ -115,6 +115,13 @@ namespace Library.API
                         }
                     });
 
+                setupAction.ResolveConflictingActions(apiDescriptions =>
+                {
+
+                    return apiDescriptions.First();
+
+                });
+
                 //We specify xml comments file in build properties for the project
                 var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
